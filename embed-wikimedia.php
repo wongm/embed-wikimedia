@@ -74,22 +74,24 @@ function embed_wikimedia_wikipedia( $matches, $attr, $url, $rawattr ) {
  */
 function embed_wikimedia_commons( $matches, $attr, $url, $rawattr ) {
 	$article_title = $matches[1];
-	$rest_url      = sprintf( 'https://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=%s&thumbwidth=%s', $article_title, $attr['width'] );
+	$rest_url      = sprintf( 'https://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=%s&thumbwidth=%s', $article_title, 500 );
 	$info          = embed_wikimedia_get_data( $rest_url, 'xml' );
 	$link_format   = '<a href="%s"><img src="%s" alt="%s" /></a>';
 	$img_link      = sprintf( $link_format, $url, $info['file']['urls']['thumbnail'], $info['file']['name'] );
 	$caption       = sprintf(
-		'%1$s (%2$s) by %3$s, %4$s. %5$s',
+		'<a href="%6$s" target="_blank">Photo by %3$s, via Wikimedia Commons</a>',
 		$info['file']['title'],
 		$info['file']['date'],
-		$info['file']['author'],
+		strip_tags($info['file']['author']),
 		$info['licenses']['license']['name'],
-		$info['description']['language']
+		$info['description']['language'],
+		$url
 	);
+	
 	$caption_attrs = [
 		'caption' => $caption,
 		'width'   => $attr['width'],
-		'align'   => 'aligncenter',
+		'align'   => '',
 	];
 	return img_caption_shortcode( $caption_attrs, $img_link );
 }
