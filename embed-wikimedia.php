@@ -3,19 +3,19 @@
  * The Embed Wikimedia plugin adds support for embedding links to Wikimedia projects such as Wikipedia.
  *
  * @file
- * @package           embed-wikimedia
+ * @package           embed-wikimedia-mw
  * @since             0.1.0
  *
  * @wordpress-plugin
- * Plugin Name:       Embed Wikimedia
+ * Plugin Name:       Embed Wikimedia MW
  * Plugin URI:
  * Description:       Embed links to Wikimedia projects such as Wikipedia.
  * Version:           0.2.0
- * Author:            Sam Wilson
- * Author URI:        https://samwilson.id.au
+ * Author:            Marcus Wong (forked from work by Sam Wilson)
+ * Author URI:        Forked from https://samwilson.id.au
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       embed-wikimedia
+ * Text Domain:       embed-wikimedia-mw
  * Domain Path:       /languages
  */
 
