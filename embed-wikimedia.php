@@ -44,7 +44,18 @@ function embed_wikimedia_wikipedia( $matches, $attr, $url, $rawattr ) {
 	$rest_url      = sprintf( 'https://%s/api/rest_v1/page/summary/%s', $base_url, $article_title );
 	$info          = embed_wikimedia_get_data( $rest_url );
 	$img           = '';
-	if ( isset( $info['thumbnail'] ) ) {
+	if ( isset( $info['originalimage'] ) ) {
+		$factor = (500 / $info['originalimage']['width']);
+		$img = sprintf(
+			'<a href="%1$s"><img src="%2$s" alt="%3$s" width="%4$s" height="%5$s" /></a>',
+			$url,
+			$info['originalimage']['source'],
+			$info['description'],
+			$info['originalimage']['width'] * $factor,
+			$info['originalimage']['height'] * $factor
+		);
+	}	
+	if ( $img == '' && isset( $info['thumbnail'] ) ) {	
 		$img = sprintf(
 			'<a href="%1$s"><img src="%2$s" alt="%3$s" width="%4$s" height="%5$s" /></a>',
 			$url,
@@ -54,11 +65,11 @@ function embed_wikimedia_wikipedia( $matches, $attr, $url, $rawattr ) {
 			$info['thumbnail']['height']
 		);
 	}
-	$out = '<blockquote class="embed-wikimedia">'
-		. '<a href="' . $url . '"><strong>' . $info['displaytitle'] . '</strong></a>'
+	$out = '<div class="wp-caption">'
 		. $img
 		. $info['extract_html']
-		. '</blockquote>';
+		. '<p class="wp-caption-text"><a href="' . $url . '">Image via Wikipedia</a></p>'
+		. '</div>';
 	return $out;
 }
 
