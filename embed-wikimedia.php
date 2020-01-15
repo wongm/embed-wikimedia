@@ -93,7 +93,7 @@ function embed_wikimedia_commons( $matches, $attr, $url, $rawattr ) {
 		'<a href="%6$s" target="_blank">Photo by %3$s, via Wikimedia Commons</a>',
 		$info['file']['title'],
 		$info['file']['date'],
-		strip_tags($info['file']['author']),
+		wp_strip_all_tags($info['file']['author'], true),
 		$info['licenses']['license']['name'],
 		$info['description']['language'],
 		$url
