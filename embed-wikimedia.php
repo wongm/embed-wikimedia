@@ -195,6 +195,6 @@ function embed_wikimedia_get_data( $url, $response_format = 'json' ) {
 	$info = ( 'xml' === $response_format )
 		? json_decode( wp_json_encode( new SimpleXMLElement( $response['body'] ) ), true )
 		: json_decode( $response['body'], true );
-	set_transient( $transient_name, $info, 60 * 60 );
+	set_transient( $transient_name, $info, 0 );
 	return $info;
 }
