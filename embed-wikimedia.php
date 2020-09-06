@@ -198,3 +198,16 @@ function embed_wikimedia_get_data( $url, $response_format = 'json' ) {
 	set_transient( $transient_name, $info, 0 );
 	return $info;
 }
+
+/**
+ * Extend http timeout duration to 30 seconds
+ * 
+ * @param int $timeout The timeout duration in seconds. Default is 5.
+ *
+ * @return int The filtered timeout duration in seconds.
+ */
+function __extend_http_request_timeout( $timeout ) {
+    return 30; // seconds
+}
+add_filter( 'http_request_timeout', '__extend_http_request_timeout' );
+?>
