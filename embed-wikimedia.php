@@ -43,7 +43,7 @@ function embed_wikimedia_wikipedia( $matches, $attr, $url, $rawattr ) {
 	$article_title = $matches[2];
 	$rest_url      = sprintf( 'https://%s/api/rest_v1/page/summary/%s', $base_url, $article_title );
 	$info          = embed_wikimedia_get_data( $rest_url );
-	$img           = '';
+	$img           = '';	
 	if ( isset( $info['originalimage'] ) ) {
 		$factor = (500 / $info['originalimage']['width']);
 		$img = sprintf(
@@ -87,23 +87,28 @@ function embed_wikimedia_commons( $matches, $attr, $url, $rawattr ) {
 	$article_title = $matches[1];
 	$rest_url      = sprintf( 'https://tools.wmflabs.org/magnus-toolserver/commonsapi.php?image=%s&thumbwidth=%s', $article_title, 500 );
 	$info          = embed_wikimedia_get_data( $rest_url, 'xml' );
-	$link_format   = '<a href="%s"><img src="%s" alt="%s" /></a>';
-	$img_link      = sprintf( $link_format, $url, $info['file']['urls']['thumbnail'], $info['file']['name'] );
-	$caption       = sprintf(
-		'<a href="%6$s" target="_blank">Photo by %3$s, via Wikimedia Commons</a>',
-		$info['file']['title'],
-		$info['file']['date'],
-		wp_strip_all_tags($info['file']['author'], true),
-		$info['licenses']['license']['name'],
-		$info['description']['language'],
-		$url
-	);
+	$link_format   = '<a href="%s" target="_blank">%s</a>';
+	$img_link      = sprintf( $link_format, $url, $url );
 	
-	$caption_attrs = [
-		'caption' => $caption,
-		'width'   => $attr['width'],
-		'align'   => '',
-	];
+	if ( isset( $info['file'] ) ) {
+		$link_format   = '<a href="%s" target="_blank"><img src="%s" alt="%s" /></a>';
+		$img_link      = sprintf( $link_format, $url, $info['file']['urls']['thumbnail'], $info['file']['name'] );
+		$caption       = sprintf(
+			'<a href="%6$s" target="_blank">Photo by %3$s, via Wikimedia Commons</a>',
+			$info['file']['title'],
+			$info['file']['date'],
+			wp_strip_all_tags($info['file']['author'], true),
+			$info['licenses']['license']['name'],
+			$info['description']['language'],
+			$url
+		);
+		
+		$caption_attrs = [
+			'caption' => $caption,
+			'width'   => $attr['width'],
+			'align'   => '',
+		];
+	}
 	return img_caption_shortcode( $caption_attrs, $img_link );
 }
 
@@ -184,7 +189,8 @@ function embed_wikimedia_get_data( $url, $response_format = 'json' ) {
 	if ( $response instanceof WP_Error ) {
 		// translators: error message displayed when no response could be got from an API call.
 		$msg = __( 'Unable to retrieve URL: %s', 'embed-wikimedia' );
-		throw new Exception( sprintf( $msg, $url ) );
+		error_log( sprintf( $msg, $url ) );
+		return;
 	}
 	$info = ( 'xml' === $response_format )
 		? json_decode( wp_json_encode( new SimpleXMLElement( $response['body'] ) ), true )
